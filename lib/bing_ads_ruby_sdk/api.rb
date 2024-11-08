@@ -25,7 +25,7 @@ module BingAdsRubySdk
     # @param client_id
     def initialize(developer_token:, client_id:, oauth_store:, version: DEFAULT_SDK_VERSION,
       environment: :production,
-      client_secret: nil, redirect_uri: nil)
+      client_secret: nil)
       @version = version
       @environment = environment
       @header = Header.new(
@@ -33,8 +33,7 @@ module BingAdsRubySdk
         client_id: client_id,
         client_secret: client_secret,
         store: oauth_store,
-        environment: environment,
-        redirect_uri: redirect_uri
+        environment: environment
       )
     end
 

@@ -9,7 +9,8 @@ module BingAdsRubySdk
         sandbox: {
           scope: "https://api.ads.microsoft.com/msads.manage",
           authorize_uri: "https://login.windows-ppe.net/consumers/oauth2/v2.0/authorize",
-          token_uri: "https://login.windows-ppe.net/consumers/oauth2/v2.0/token"
+          token_uri: "https://login.windows-ppe.net/consumers/oauth2/v2.0/token",
+          redirect_uri: nil
         },
         production: {
           scope: "https://ads.microsoft.com/msads.manage",
@@ -23,9 +24,8 @@ module BingAdsRubySdk
       # @param client_id
       # @param store [Store]
       # @param environment [environment]
-      def initialize(developer_token:, client_id:, store:, client_secret: nil, environment: :production, redirect_uri: nil)
+      def initialize(developer_token:, client_id:, store:, client_secret: nil, environment: :production)
         @environment = environment
-        @redirect_uri = redirect_uri
         @client = Signet::OAuth2::Client.new(
           client_params(developer_token, client_id, client_secret)
         )
@@ -36,6 +36,7 @@ module BingAdsRubySdk
       # @return [nil] if client.client_id is nil.
       def code_url
         return nil if client.client_id.nil?
+
         "#{authorize_uri}?client_id=#{client.client_id}&" \
         "scope=offline_access+#{scope}&response_type=code&" \
         "redirect_uri=#{redirect_uri}"
@@ -125,10 +126,6 @@ module BingAdsRubySdk
       end
 
       def redirect_uri
-        raise "Redirect URI not defined for Sandbox" if environment == :sandbox && @redirect_uri.nil?
-
-        return @redirect_uri if environment == :sandbox
-
         API_URLS[environment][:redirect_uri]
       end
     end
